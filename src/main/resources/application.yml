@@ -1,2 +1,13 @@
 server:
   port: 9999
+
+
+serviceUI:
+  userPath: src/main/resources/users
+  maps:
+    mc:
+      port: 25565
+      command: "cd /opt/mc;sh start.sh"
+    alist:
+      port: 5244
+      command: "alist server"
