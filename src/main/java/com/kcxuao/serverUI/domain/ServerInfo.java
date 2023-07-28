@@ -13,4 +13,17 @@ public class ServerInfo {
 
     private String userPath;
     private Map<String, String> maps;
+
+    public String getPort(String name) {
+        String s = maps.get(name + ".port");
+        if (s == null) throw new CustomException("服务不存在");
+        return s;
+    }
+
+    public String getCommand(String name) {
+        String s = maps.get(name + ".command");
+        if (s == null) throw new CustomException("服务不存在");
+        return s;
+    }
+
 }

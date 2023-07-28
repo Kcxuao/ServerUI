@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
 import java.io.*;
-import java.security.NoSuchAlgorithmException;
 
 @Component
 public class LoginUtils {

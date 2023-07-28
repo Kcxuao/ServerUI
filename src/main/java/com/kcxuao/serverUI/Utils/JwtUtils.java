@@ -3,7 +3,6 @@ package com.kcxuao.serverUI.Utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.kcxuao.serverUI.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +33,13 @@ public class JwtUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("alg", "HS256");
         map.put("typ", "JWT");
-        String token = JWT.create()
+        return JWT.create()
                 .withHeader(map)// 添加头部
                 //可以将基本信息放到claims中
-                .withClaim("userName", user.getUsername())//userName
-                .withClaim("password", user.getPassword())//password
+                .withClaim("encry", user.getKey())
                 .withExpiresAt(expireDate) //超时设置,设置过期的日期
                 .withIssuedAt(new Date()) //签发时间
-                .sign(Algorithm.HMAC256(SECRET)); //SECRET加密
-        return token;
+                .sign(Algorithm.HMAC256(SECRET));
     }
 
     /**

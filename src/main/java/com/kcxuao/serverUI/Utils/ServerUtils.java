@@ -23,11 +23,20 @@ public class ServerUtils {
      * @param name 端口号
      * @return PID字符串数组
      */
-    public String[] getPID(String name) throws IOException {
-        String port = serverInfo.getMaps().get(name + ".port");
+
+    public boolean status(String name) throws IOException {
+        String[] pid = getPID(name);
+        return pid.length != 0;
+    }
+
+
+    private String[] getPID(String name) throws IOException {
+        String port = serverInfo.getPort(name);
         Process exec = runtime.exec("lsof -i:" + port);
 
         BufferedReader br = exec.inputReader();
+
+        // PID去重
         TreeSet<String> pidSet = new TreeSet<>();
 
         String line;
@@ -35,6 +44,7 @@ public class ServerUtils {
             if (i == 0) {
                 continue;
             }
+            System.out.println(line);
             pidSet.add(line.split(" +")[1]);
         }
         br.close();
@@ -43,26 +53,29 @@ public class ServerUtils {
 
     /**
      * 根据PID结束程序
-     * @param pids pid数组
+     * @param name 服务名称
      */
-    public void stopServer(String[] pids) throws IOException {
+    public void stopServer(String name) throws IOException {
+        String[] pids = getPID(name);
         for (String pid : pids) {
             runtime.exec("kill -9 " + pid);
         }
     }
 
+    /**
+     * 启动服务
+     * @param name 服务名称
+     */
     public void startServer(String name) throws Exception {
-        String command = serverInfo.getMaps().get(name + ".command");
+        String command = serverInfo.getCommand(name);
         Process exec = runtime.exec(command);
         exec.waitFor();
-        BufferedReader br = exec.inputReader();
 
+        BufferedReader br = exec.inputReader();
         String line;
         while ((line = br.readLine()) != null) {
             System.out.println(line);
         }
         br.close();
     }
-
-
 }

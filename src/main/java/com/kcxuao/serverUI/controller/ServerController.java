@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Slf4j
 @RestController
@@ -19,21 +18,22 @@ public class ServerController {
     private ServerUtils serverUtils;
 
     @GetMapping("/{name}")
-    public R<String[]> getStatus(@PathVariable String name) throws IOException {
+    public R<Boolean> getStatus(@PathVariable String name) throws IOException {
         log.info("查询服务 ==> {}", name);
-        String[] pid = serverUtils.getPID(name);
-        return R.success(pid);
+        boolean status = serverUtils.status(name);
+        return R.success(status);
     }
 
-    @DeleteMapping
-    public R<String> stop(@RequestBody String[] pids) throws IOException {
-        log.info("终止进程 ==> {}", Arrays.toString(pids));
-        serverUtils.stopServer(pids);
+    @DeleteMapping("/{name}")
+    public R<String> stop(@PathVariable String name) throws IOException {
+        log.info("终止进程 ==> {}", name);
+        serverUtils.stopServer(name);
         return R.success("OK");
     }
 
-    @GetMapping("/start/{name}")
-    public R<String> start(@PathVariable String name) throws Exception {
+    @PostMapping
+    public R<String> start(@RequestBody String name) throws Exception {
+        log.info("启动进程 ==> {}", name);
         serverUtils.startServer(name);
         return R.success("OK");
     }
