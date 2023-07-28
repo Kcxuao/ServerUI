@@ -4,8 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.kcxuao.serverUI.domain.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +11,6 @@ import java.util.Map;
 
 public class JwtUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
     /**
      * 密钥
      */
@@ -51,8 +48,6 @@ public class JwtUtils {
             verifier.verify(token);
 
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            logger.error("token解码异常");
             //解码异常则抛出异常
             return false;
         }

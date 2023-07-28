@@ -8,10 +8,14 @@ spring:
       max-file-size: -1
       max-request-size: -1
 
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+
 
 serviceUI:
   userPath: src/main/resources/users
-  projectPath: /opt/server
+  projectPath: /opt/project/
   maps:
     mc:
       port: 25565
