@@ -9,6 +9,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.TreeSet;
 
+/**
+ * 服务工具类
+ */
 @Component
 public class ServerUtils {
 
@@ -24,12 +27,24 @@ public class ServerUtils {
      * @return PID字符串数组
      */
 
+    /**
+     * 通过服务名查询PID判断服务是否在线
+     * @param name 服务名
+     * @return boolean
+     * @throws IOException
+     */
     public boolean status(String name) throws IOException {
         String[] pid = getPID(name);
         return pid.length != 0;
     }
 
 
+    /**
+     * 通过服务名查询PID
+     * @param name 服务名
+     * @return String[PID]
+     * @throws IOException
+     */
     private String[] getPID(String name) throws IOException {
         String port = serverInfo.getPort(name);
         Process exec = runtime.exec("lsof -i:" + port);

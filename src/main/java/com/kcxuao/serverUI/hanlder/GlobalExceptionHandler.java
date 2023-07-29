@@ -24,10 +24,9 @@ public class GlobalExceptionHandler {
      * token解析错误
      * @param ex
      * @return
-     * @throws IOException
      */
     @ExceptionHandler(value = {JWTDecodeException.class, IllegalArgumentException.class, SignatureVerificationException.class, NestedServletException.class})
-    public R<String> JWTDecodeExceptionHandler(Exception ex) throws IOException {
+    public R<String> JWTDecodeExceptionHandler(Exception ex) {
 
         log.error("token解析异常 ==> {}", ex.getMessage());
         return R.error("TOKEN无效");

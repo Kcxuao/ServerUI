@@ -4,10 +4,16 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 统一返回类
+ * @param <T>
+ */
 @Data
 public class R<T> implements Serializable {
 
+    // 0 请求成功 1 请求失败
     private Integer code;
+
     private String msg;
 
     private T data;

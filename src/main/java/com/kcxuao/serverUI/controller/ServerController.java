@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+
 @Slf4j
 @Api(tags = "服务接口")
 @RestController
@@ -46,7 +47,7 @@ public class ServerController {
     @ApiImplicitParams(
             @ApiImplicitParam(name = "name", value = "服务名", required = true)
     )
-    public R<String> start(@RequestBody String name) throws Exception {
+    public R<String> start(@RequestParam String name) throws Exception {
         log.info("启动进程 ==> {}", name);
         serverUtils.startServer(name);
         return R.success("OK");

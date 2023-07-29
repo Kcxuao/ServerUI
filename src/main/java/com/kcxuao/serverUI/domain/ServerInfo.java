@@ -6,6 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
+/**
+ * 封装配置中的内容
+ */
 @Data
 @Configuration
 @ConfigurationProperties("serviceui")
