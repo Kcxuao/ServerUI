@@ -1,8 +1,8 @@
 package com.kcxuao.serverUI.controller;
 
-
-import com.kcxuao.serverUI.Utils.ServerUtils;
 import com.kcxuao.serverUI.common.R;
+import com.kcxuao.serverUI.domain.MyProcess;
+import com.kcxuao.serverUI.service.ServerService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class ServerController {
 
     @Autowired
-    private ServerUtils serverUtils;
+    private ServerService serverService;
 
     @ApiOperation(value = "查询服务状态", notes = "通过服务名查询服务是否在线")
     @GetMapping("/{name}")
@@ -27,7 +27,7 @@ public class ServerController {
     )
     public R<Boolean> getStatus(@PathVariable String name) throws IOException {
         log.info("查询服务 ==> {}", name);
-        boolean status = serverUtils.status(name);
+        boolean status = serverService.getStatus(name);
         return R.success(status);
     }
 
@@ -38,7 +38,7 @@ public class ServerController {
     )
     public R<String> stop(@PathVariable String name) throws IOException {
         log.info("终止进程 ==> {}", name);
-        serverUtils.stopServer(name);
+        serverService.stop(name);
         return R.success("OK");
     }
 
@@ -49,8 +49,16 @@ public class ServerController {
     )
     public R<String> start(@RequestParam String name) throws Exception {
         log.info("启动进程 ==> {}", name);
-        serverUtils.startServer(name);
+        serverService.start(name);
         return R.success("OK");
+    }
+
+    @ApiOperation(value = "查询系统状态", notes = "查询当前CPU，内存剩余、占用最高的5个进程")
+    @GetMapping("/sys")
+    public R<MyProcess> getSystemStatus() throws Exception {
+        log.info("查询系统状态");
+        MyProcess systemStatus = serverService.getSystemStatus();
+        return R.success(systemStatus);
     }
 
 }

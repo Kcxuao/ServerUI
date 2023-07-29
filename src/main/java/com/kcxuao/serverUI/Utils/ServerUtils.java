@@ -2,11 +2,13 @@ package com.kcxuao.serverUI.Utils;
 
 import com.kcxuao.serverUI.domain.ServerInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -21,76 +23,57 @@ public class ServerUtils {
     @Autowired
     private ServerInfo serverInfo;
 
-    /**
-     * 根据端口号获取PID
-     * @param name 端口号
-     * @return PID字符串数组
-     */
-
-    /**
-     * 通过服务名查询PID判断服务是否在线
-     * @param name 服务名
-     * @return boolean
-     * @throws IOException
-     */
-    public boolean status(String name) throws IOException {
-        String[] pid = getPID(name);
-        return pid.length != 0;
-    }
-
 
     /**
      * 通过服务名查询PID
+     *
      * @param name 服务名
      * @return String[PID]
-     * @throws IOException
      */
-    private String[] getPID(String name) throws IOException {
-        String port = serverInfo.getPort(name);
-        Process exec = runtime.exec("lsof -i:" + port);
+    public String[] getPID(String name) throws IOException {
 
-        BufferedReader br = exec.inputReader();
-
-        // PID去重
-        TreeSet<String> pidSet = new TreeSet<>();
-
-        String line;
-        for (int i = 0; (line = br.readLine()) != null; i++) {
-            if (i == 0) {
-                continue;
-            }
-            System.out.println(line);
-            pidSet.add(line.split(" +")[1]);
+        String port;
+        try {
+            port = serverInfo.getPort(name);
+        } catch (Exception e) {
+            port = name;
         }
-        br.close();
-        return pidSet.toArray(new String[]{});
+
+        Process exec = exec("lsof -i:" + port);
+        List<String> read = read(exec);
+
+        ArrayList<String> pids = new ArrayList<>();
+        for (int i = 1; i < read.size(); i++) {
+            String[] split = read.get(i).split(" +");
+            pids.add(split[1]);
+        }
+
+        return pids.toArray(new String[0]);
     }
 
-    /**
-     * 根据PID结束程序
-     * @param name 服务名称
-     */
-    public void stopServer(String name) throws IOException {
-        String[] pids = getPID(name);
-        for (String pid : pids) {
-            runtime.exec("kill -9 " + pid);
-        }
-    }
 
-    /**
-     * 启动服务
-     * @param name 服务名称
-     */
-    public void startServer(String name) throws Exception {
-        String command = serverInfo.getCommand(name);
-        Process exec = runtime.exec(command);
-        exec.waitFor();
 
+    public List<String> read(Process exec) throws IOException {
         BufferedReader br = exec.inputReader();
+
+        TreeSet<String> set = new TreeSet<>();
+
         String line;
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
+            set.add(line);
         }
         br.close();
+        return set.stream().toList();
+    }
+
+    public Process exec(String command) throws IOException {
+        return runtime.exec(
+                new String[]{"sh", "-c", command}
+        );
+    }
+
+    public static void main(String[] args) throws IOException {
+        String[] pid = new ServerUtils().getPID("22");
+        System.out.println(Arrays.toString(pid));
     }
 }
